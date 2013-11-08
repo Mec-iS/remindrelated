@@ -5,10 +5,13 @@
 
 <br/>
 <br/>
+{{remind.date}} - {{remind.what}}, {{remind.link}}
+<br/>
+<br/>
 
-{% if reminds|safe != '{}' %}
+{% if relateds|safe != '{}' %}
 
-   {% for k,v in reminds.items %}
+   {% for k,v in relateds.items %}
       {{v.date}} - {{v.what}}, {{v.link}} <br/>
    {% endfor %}
 

@@ -19,8 +19,8 @@ class Remind(db.Model):
     @classmethod
     def createRemind(self, params, author):
         what = params['what']
-        generated_key = what[0:18]
-        generated_key = re.sub("[\W\d]", "_", generated_key.strip())
+        generated_key = re.sub("[\W\d]", "-", what.strip())
+        
         remind = Remind(key_name=generated_key, what=what, author=author)
         remind.status = 'open'
         remind.link = params['link']
@@ -32,14 +32,16 @@ class Remind(db.Model):
         remind.tags = key_tags
         remind.put()
     
-    @classmethod
-    def getByTag(self, tag):
-        return Remind.all().filter("tags =",tag)
+    
         
 class Tag(db.Model):
     tagName =         db.StringProperty(required = True)
     toRemind =        db.ListProperty(db.Key, default=[])
     tagCounter =      db.IntegerProperty(required = True)
+    
+    @property
+    def remindsTo(self):
+        return Remind.all().filter("tags =", self.key())
     
     @classmethod
     def addTag(self, t, remind):
@@ -65,8 +67,7 @@ class Related(db.Model):
     def createRelated(self, remind, params):
         count = remind.countRelated + 1
         what = params['text']
-        generated_key = what[0:12]
-        generated_key = re.sub("[\W\d]", "_", generated_key.strip())+str(count)
+        generated_key = re.sub("[\W\d]", "-", what.strip())+'-'+str(count)
         related = Related(parent=remind, key_name=generated_key)
         related.link = params['link']
         related.text = params['text']
@@ -92,10 +93,7 @@ class BaseHandler(webapp2.RequestHandler):
         logStatus = ' <a href="' + users.create_logout_url(callbackURI) + '">log off</a>'
         userName = self.user.nickname() + " "
       if (users.is_current_user_admin()):
-        if pageId == None:   
-            logStatus = ' <a href="' + self.request.host_url + '/new">posta</a> |' + logStatus
-        else:
-            logStatus = ' <a href="' + self.request.host_url + '/new">posta</a> | <a href="' + SITE_URL + '/edit?slug=' + pageId + '">modifica</a> |'  + logStatus
+        logStatus = ' <a href="' + self.request.host_url + '/new">new Remind</a> |' + logStatus
       return userName , logStatus
       
      userName, logStatus = GetLoginLinks(self.request.uri)
@@ -111,12 +109,12 @@ class HomeController(BaseHandler):
        params = {}
        reminds = {}
        for p in posts:
-          reminds[str(p.key())] = {'what': p.what, 'date' : p.date, 'link' : p.link}
+          reminds[str(p.key().name())] = {'what': p.what, 'date' : p.date, 'link' : p.link}
        params['reminds'] = reminds
-       tag_list = []
+       tag_list = {}
        tags = Tag.all()
        for t in tags:
-           tag_list.append(t.tagName)
+           tag_list[str(t.key().name())] = { 'tagName' : t.tagName }
        params['tags'] = tag_list
        self.render_template('home.html', params)
        
@@ -165,7 +163,11 @@ class NewController(BaseHandler):
             for t in tags:
                tag_list.append(t.tagName)
             params['tags'] = tag_list
-            params['key_id'] = id
+            if id is not None:
+               obj = Remind.get_by_key_name(id)
+               params['key_id'] = obj.key()
+            else:
+               params['key_id'] = 'None'
             return self.render_template('remind.html', params)
       return self.redirect("/")              
             
@@ -174,19 +176,33 @@ class RelatedController(BaseHandler):
        params = {
           'key_id' : id
        }
-       key = db.Key(id)
-       params['key'] = key
+       obj = Remind.get_by_key_name(id)
+       key = obj.key()
+              
        q = Related.all()
        q.ancestor(key)
        q.run()
 
-       reminds = {}
+       relateds = {}
        for r in q:
-          reminds[str(r.key())] = {'what': r.text, 'link' : r.link, 'date': r.date}
-       params['reminds'] = reminds
+          relateds[str(r.key().name())] = {'what': r.text, 'link' : r.link, 'date': r.date}
+       params['relateds'] = relateds
        
+       remind = obj
+       rem_dict = {'what': remind.what, 'link' : remind.link, 'date': remind.date}
+       params['remind'] = rem_dict
        self.render_template('related.html', params)     
-          
+
+class TagController(BaseHandler):
+   def get(self, id=None):
+       obj = Tag.get_by_key_name(id)
+       params = {}
+       reminds = {}
+       for r in obj.remindsTo:
+          reminds[str(r.key().name())] = {'what': r.what, 'link' : r.link, 'date': r.date}
+       params['reminds'] = reminds
+       self.render_template('find.html',params)
+       
 class RssController(BaseHandler):
    def get(self):
        self.render_template('home.html')
@@ -202,6 +218,10 @@ app = webapp2.WSGIApplication([
         PathPrefixRoute('/related/<id:[a-zA-Z0-9-_]*>', [
          webapp2.Route('/', RelatedController),
          webapp2.Route('/<id:[a-zA-Z0-9-_]+>/', RelatedController),
+        ]),
+        PathPrefixRoute('/find/<id:[a-zA-Z0-9]*>', [
+         webapp2.Route('/', TagController),
+         webapp2.Route('/<id:[a-zA-Z0-9]+>/', TagController),
         ]),
         ('/edit', EditController),
         ('/rss.xml', RssController)

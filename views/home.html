@@ -9,11 +9,12 @@
 {{v.date}} - {{v.what}}, {{v.link}} - <a href="/new/{{k}}/">add related</a> - <a href="/related/{{k}}/">relateds</a><br/>
 
 {% endfor %}
+
 <br/>
 <br/>
 <b>Tag esistenti</b><br/>
-{% for t in tags %}
-   {{t}}<br/>
+{% for k,v in tags.items %}
+   <a href="/find/{{k}}/">{{v.tagName}}</a><br/>
 {% endfor %}
 
 {% endblock %}
