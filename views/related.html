@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+<br/>
+<br/>
+
+{% if reminds|safe != '{}' %}
+
+   {% for k,v in reminds.items %}
+      {{v.date}} - {{v.what}}, {{v.link}} <br/>
+   {% endfor %}
+
+   {% else %}
+   No related! Poor Guy...
+
+{% endif %}
+
+{% endblock %}

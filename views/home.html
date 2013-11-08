@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<br/>
+<br/>
+
+{% for k,v in reminds.items %}
+{{v.date}} - {{v.what}}, {{v.link}} - <a href="/new/{{k}}/">add related</a> - <a href="/related/{{k}}/">relateds</a><br/>
+
+{% endfor %}
+<br/>
+<br/>
+<b>Tag esistenti</b><br/>
+{% for t in tags %}
+   {{t}}<br/>
+{% endfor %}
+
+{% endblock %}

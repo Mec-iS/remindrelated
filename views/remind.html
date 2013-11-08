@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+<br/>
+<br/>
+
+<form action="/edit" method="POST">
+
+titolo, descrizione breve: <input type="text" name="what"/><br/>
+link all&apos;articolo: <input type="text" name="link"/><br/>
+{% if key_id|safe == 'None'%}
+tags: <input type="text" name="tags"/><br/><br/>
+{% endif %}
+<input type="hidden" name="new" value="{{key_id}}">
+
+<input type="submit"/>
+</form>
+
+<br/>
+<br/>
+<b>Tag esistenti</b><br/>
+{% for t in tags %}
+   {{t}}<br/>
+{% endfor %}
+
+{% endblock %}
