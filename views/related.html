@@ -13,7 +13,7 @@
 {% if relateds|safe != '{}' %}
 
    {% for k,v in relateds.items %}
-      {{v.date}} - {{v.what}}, <a href="{{v.link}}" target="_blank">find it!</a> <br/>
+      {{v.date}} - {{v.text}}, <a href="{{v.link}}" target="_blank">find it!</a> <br/>
    {% endfor %}
 
    {% else %}

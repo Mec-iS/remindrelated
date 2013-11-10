@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<br/>
+{% if message %}
+<b style="color:red;">{{message}}</b>
+{% endif %}
+<br/>
+<br/>
+
+{% for k,v in reminds.items %}
+{{v.date}} - {{v.what}}, <a href="{{v.link}}" target="_blank">find it!</a> - <a href="/new/{{k}}/">add related</a>
+        
+        {% if v.relateds|safe != '[]' %}
+        <ul>
+        {% for rel in v.relateds %}
+            <li><span style="">{{rel.text}} <a href="{{v.link}}" target="_blank">find it!</a></span></li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+<br/>
+{% endfor %}
+
+{% endblock %}

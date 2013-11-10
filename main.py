@@ -111,7 +111,7 @@ class HomeController(BaseHandler):
        reminds_array = []
        users_array = []
        for p in posts:
-          reminds[str(p.key().name())] = {'what': p.what, 'date' : p.date, 'link' : p.link}
+          reminds[str(p.key().name())] = p
           reminds_array.append(str(p.key().name()))
           if p.author not in users_array:
             users_array.append(p.author)
@@ -202,21 +202,30 @@ class RelatedController(BaseHandler):
 
        relateds = {}
        for r in q:
-          relateds[str(r.key().name())] = {'what': r.text, 'link' : r.link, 'date': r.date}
+          relateds[str(r.key().name())] = r
        params['relateds'] = relateds
        
        remind = obj
-       rem_dict = {'what': remind.what, 'link' : remind.link, 'date': remind.date}
+       rem_dict = remind
        params['remind'] = rem_dict
        self.render_template('related.html', params)     
 
 class TagController(BaseHandler):
    def get(self, id=None):
+   # add related to search results
        obj = Tag.get_by_key_name(id)
+       q = db.Query(Related)
        params = {}
        reminds = {}
        for r in obj.remindsTo:
-          reminds[str(r.key().name())] = {'what': r.what, 'link' : r.link, 'date': r.date}
+          reminds[str(r.key().name())] = {'what': r.what, 'link' : r.link, 'date': r.date, 'relateds' : []}
+          rel = q.ancestor(r.key())
+          if rel is not None:
+            rel_list = []
+            for rel_found in rel:
+              rel_list.append({'text': rel_found.text, 'link' : rel_found.link, 'date': rel_found.date}) 
+            key_name = str(r.key().name())
+            reminds[key_name]['relateds'] = rel_list
        params['reminds'] = reminds
        self.render_template('find.html',params)
        
