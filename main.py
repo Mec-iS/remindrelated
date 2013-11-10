@@ -19,7 +19,7 @@ class Remind(db.Model):
     @classmethod
     def createRemind(self, params, author):
         what = params['what']
-        generated_key = re.sub("[\W\d]", "-", what.strip())
+        generated_key = re.sub("[\W]", "-", what.strip())
         
         remind = Remind(key_name=generated_key, what=what, author=author)
         remind.status = 'open'
@@ -67,7 +67,7 @@ class Related(db.Model):
     def createRelated(self, remind, params):
         count = remind.countRelated + 1
         what = params['text']
-        generated_key = re.sub("[\W\d]", "-", what.strip())+'-'+str(count)
+        generated_key = re.sub("[\W]", "-", what.strip())+'-'+str(count)
         related = Related(parent=remind, key_name=generated_key)
         related.link = params['link']
         related.text = params['text']
@@ -108,14 +108,24 @@ class HomeController(BaseHandler):
        posts = Remind.all()
        params = {}
        reminds = {}
+       reminds_array = []
+       users_array = []
        for p in posts:
           reminds[str(p.key().name())] = {'what': p.what, 'date' : p.date, 'link' : p.link}
+          reminds_array.append(str(p.key().name()))
+          if p.author not in users_array:
+            users_array.append(p.author)
        params['reminds'] = reminds
+       params['reminds_array'] = reminds_array
+       params['users_array'] = users_array
        tag_list = {}
+       tags_array = []
        tags = Tag.all()
        for t in tags:
            tag_list[str(t.key().name())] = { 'tagName' : t.tagName }
+           tags_array.append(t.tagName)
        params['tags'] = tag_list
+       params['tags_array'] = tags_array
        self.render_template('home.html', params)
        
 class EditController(BaseHandler):
@@ -125,8 +135,15 @@ class EditController(BaseHandler):
             'what' : self.request.get('what'),
             'link' : self.request.get('link')
           }
+          if len(self.request.get('what')) < 8 or len(self.request.get('what')) > 51:
+            params['message'] = 'Title too short/long! (min 8, max 50)'
+            return self.redirect('/new')
+          
           tags = self.request.get('tags')
           tags = tags.split()
+          if len(tags) > 6 or len(tags) < 2:
+            params['message'] = 'Too many tags! (max 5)'
+            return self.redirect('/new')
           params['tags'] = tags
           # new remind
           author = users.get_current_user()
@@ -210,7 +227,6 @@ class RssController(BaseHandler):
 app = webapp2.WSGIApplication([
         ('/', HomeController),
         ('/new', NewController),
-        ('/new/<id:\/*>', NewController),
         PathPrefixRoute('/new/<id:[a-zA-Z0-9-_]*>', [
          webapp2.Route('/', NewController),
          webapp2.Route('/<id:[a-zA-Z0-9-_]+>/', NewController),
@@ -219,9 +235,9 @@ app = webapp2.WSGIApplication([
          webapp2.Route('/', RelatedController),
          webapp2.Route('/<id:[a-zA-Z0-9-_]+>/', RelatedController),
         ]),
-        PathPrefixRoute('/find/<id:[a-zA-Z0-9]*>', [
+        PathPrefixRoute('/find/<id:[a-zA-Z0-9-]*>', [
          webapp2.Route('/', TagController),
-         webapp2.Route('/<id:[a-zA-Z0-9]+>/', TagController),
+         webapp2.Route('/<id:[a-zA-Z0-9-]+>/', TagController),
         ]),
         ('/edit', EditController),
         ('/rss.xml', RssController)

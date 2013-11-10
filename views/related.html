@@ -5,14 +5,15 @@
 
 <br/>
 <br/>
-{{remind.date}} - {{remind.what}}, {{remind.link}}
+<b>Remind:</b> {{remind.date}} - {{remind.what}}, <a href="{{remind.link}}" target="_blank">find it!</a>
 <br/>
 <br/>
 
+<b>Related to it:</b><br/>
 {% if relateds|safe != '{}' %}
 
    {% for k,v in relateds.items %}
-      {{v.date}} - {{v.what}}, {{v.link}} <br/>
+      {{v.date}} - {{v.what}}, <a href="{{v.link}}" target="_blank">find it!</a> <br/>
    {% endfor %}
 
    {% else %}

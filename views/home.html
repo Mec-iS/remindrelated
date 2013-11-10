@@ -4,17 +4,29 @@
 {% block body %}
 <br/>
 <br/>
+<b>Tags in the system:</b><br/>
+{% for k,v in tags.items %}
+   <a href="/find/{{k}}/">{{v.tagName}}</a>&nbsp;
+{% endfor %}
 
+<br/>
+<br/>
+<b>Users in the system:</b><br/>
+{% for u in users_array %}
+{{u}}<br/>
+{% endfor %}
+
+
+<br/>
+<br/>
+<b>Saved in the system:</b><br/>
 {% for k,v in reminds.items %}
 {{v.date}} - {{v.what}}, {{v.link}} - <a href="/new/{{k}}/">add related</a> - <a href="/related/{{k}}/">relateds</a><br/>
 
 {% endfor %}
 
-<br/>
-<br/>
-<b>Tag esistenti</b><br/>
-{% for k,v in tags.items %}
-   <a href="/find/{{k}}/">{{v.tagName}}</a><br/>
-{% endfor %}
+<div id="diagram-1"></div>
 
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="/static/d3networks.js" charset="utf-8"></script>
 {% endblock %}
