@@ -89,7 +89,7 @@ class BaseHandler(webapp2.RequestHandler):
        
      def GetLoginLinks(callbackURI, pageId=None):
       logStatus = ' <a href="' + users.create_login_url(callbackURI) + '">log on</a>'
-      userName = "Benvenuto"
+      userName = "Welcome "
       if self.user:
         logStatus = ' <a href="' + users.create_logout_url(callbackURI) + '">log off</a>'
         userName = self.user.nickname() + " "

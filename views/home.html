@@ -16,28 +16,31 @@ var graph = {{aggregates|safe}};
 </div>
 
 
-<div id="diagram-1" class="col-md-9">
-<p align="right"><b>Entities in the system:</b></p>
+<div id="diagram-1" class="col-md-8">
+<p><h4 align="right"><b>The system:</b></h4></p>
 
 </div>
 
 </div>
-
 
 <div class="row">
-<div class="col-md-12">
 <p><h4><b><u style="color:rgb(31, 119, 180);">Reminds</u> in the system:</b></h4></p>
+<div class="col-md-9">
+<div class="row">
+<div class="col-md-1"></div>
 {% for k,v in reminds.items %}
-<div class="col-md-3 remindClass" data="rem" id="{{k}}"><span class="date-span">{{v.date}}</span> - {{v.what}} @ {{v.link}} - <a class="related-link" href="/related/{{k}}/">@relateds</a> - <a class="add-related" href="/new/{{k}}/">add related</a></div>
-
+    <div class="col-md-3 remindClass" data="rem" id="{{k}}"><span class="date-span">{{v.date}}</span> <br/> <b>{{v.what}}</b> <br/><i>@{{v.link|urlizetrunc:32}}</i> <br/> <a class="related-link" href="/related/{{k}}/">@relateds</a> - <a class="add-related" href="/new/{{k}}/">add related</a></div>
+   {% if forloop.counter|divisibleby:3 %}
+    </div><div class="row"><div class="col-md-1"></div>
+   {% endif %}
 {% endfor %}
 </div>
 </div>
-
+</div>
 <div class="row">
 <p><h4><b><u>Users</u> in the system:</b></h4></p>
 {% for u in users_array %}
-{{u}}<br/>
+{{u}} [to] gmail_com<br/>
 {% endfor %}
 </div>
 

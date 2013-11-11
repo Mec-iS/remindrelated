@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>{% if title %}{% else %}{% for k,v in tags.items %}{{v.tagName}} {% endfor %}{% endif %}</title>
+ <meta name="description" content="{% for k,v in reminds.items %}{{v.what}}{% endfor %}">
+ <meta name="keywords" content="{% for k,v in tags.items %}{{v.tagName}}{% endfor %}">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+       $('html').hide();
+       //console.log('hide')
+</script>
 </head>
 
 <body>
 <div class="container">
 
 <div class="row">
+<div class="col-md-3">
 {{ username }} | {% autoescape off %}{{ logStatus }}{% endautoescape %} 
+</div>
+<div class="col-md-8" style="text-align:right;">
+<p>
+<u>Hint:</u> This is a memory system for the skills I learned from the Internet.<br/>Feel free to <span class="overline">navigate Tags and Reminds</span>, <br/>and to discovered Related arguments.<br/> <span class="overline">Use the map to find relationships</span> among arguments.
+</p>
+</div>
 </div>
 
 <!-- PAGE CONTENT -->  
@@ -36,6 +50,7 @@ margin:0px auto auto auto;
 
 .row{
   margin-bottom:2%;
+  display: block;
 }
 
 #diagram-1 {
@@ -74,7 +89,7 @@ div .tagsClass {
 .remindClass {
     padding: 10px;
     font-size: 0.9em;
-
+    display: fixed;
 }
 
 .date-span {
@@ -90,7 +105,7 @@ div .tagsClass {
 .remindClass .related-link:hover{
      font-weight: bold;
      color: rgb(174, 199, 232);
-     font-size:1.3em;
+     
 }
 
 .remindClass .add-related {
@@ -99,11 +114,20 @@ div .tagsClass {
 }
 
 .remindClass .add-related:hover {
-     font-size:1.2em;
+     
      color: rgb(174, 199, 232);
      font-weight: bold;
+}
+
+.overline {
+     color: #999;
+
 }
 </style>
 
 </body>
+<script>
+$('html').show();
+//console.log('show');
+</script>
 </html>
