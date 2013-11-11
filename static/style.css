@@ -1,0 +1,19 @@
+.row{
+  margin-bottom:2%;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+div .tagsClass {
+   float:left;
+   width:99%;
+   padding: 0 0;
+}

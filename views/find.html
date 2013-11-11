@@ -15,7 +15,7 @@
         {% if v.relateds|safe != '[]' %}
         <ul>
         {% for rel in v.relateds %}
-            <li><span style="">{{rel.text}} <a href="{{v.link}}" target="_blank">find it!</a></span></li>
+            <li><span style="">{{rel.text}} <a href="{{rel.link}}" target="_blank">find it!</a></span></li>
         {% endfor %}
         </ul>
         {% endif %}

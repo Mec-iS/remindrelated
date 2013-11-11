@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-
-
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+</head>
 
 <body>
+<div class="container">
 
+<div class="row">
 {{ username }} | {% autoescape off %}{{ logStatus }}{% endautoescape %} 
-
+</div>
 
 <!-- PAGE CONTENT -->  
 {% block body %}
 {% endblock %}
 <!-- END -->
+
+</div>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+<style>
+html {}
+
+html, body {
+     margin: 0;
+     padding: 0;
+     height: 100%;
+}
+
+body
+{ 
+font-family: Monaco, Menlo, Consolas, Helvetica, Arial, sans-serif;
+font-size:1.3em;
+margin:0px auto auto auto;
+}
+
+.row{
+  margin-bottom:2%;
+}
+
+#diagram-1 {
+  background-color: #ccc;
+  border-radius:5px;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+div .tagsClass {
+   float:left;
+   width:33%;
+   padding: 0 0;
+   margin:0 ;
+}
+.highlight-blue{
+   background-color: rgba(31, 119, 180, .7);
+   
+   border-radius:5px;
+}
+
+.highlight-orange{
+   background-color: rgba(255, 127, 14, .7);
+   
+   border-radius:5px;
+   font-weight: bold;
+}
+.remindClass {
+    padding: 10px;
+    font-size: 0.9em;
+
+}
+
+.date-span {
+    font-size:0.8em;
+    
+
+}
+
+.remindClass .related-link{
+     font-size:1.2em;
+     color: rgb(174, 199, 232);
+}
+.remindClass .related-link:hover{
+     font-weight: bold;
+     color: rgb(174, 199, 232);
+     font-size:1.3em;
+}
+
+.remindClass .add-related {
+     font-size:0.9em;
+     color: rgb(174, 199, 232);
+}
+
+.remindClass .add-related:hover {
+     font-size:1.2em;
+     color: rgb(174, 199, 232);
+     font-weight: bold;
+}
+</style>
+
 </body>
+</html>

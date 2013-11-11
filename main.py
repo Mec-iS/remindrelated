@@ -5,6 +5,7 @@ import webapp2
 from google.appengine.ext import db
 import re
 from webapp2_extras.routes import PathPrefixRoute
+import json
 
 
 class Remind(db.Model):
@@ -106,26 +107,37 @@ class BaseHandler(webapp2.RequestHandler):
 class HomeController(BaseHandler):
    def get(self):
        posts = Remind.all()
+       tags = Tag.all()
+       aggregates = {'nodes': [], 'links': []} # {'source': 0, 'target': 5, 'value':3}
        params = {}
        reminds = {}
-       reminds_array = []
+       tag_list = {}
        users_array = []
        for p in posts:
           reminds[str(p.key().name())] = p
-          reminds_array.append(str(p.key().name()))
+          parent = len(aggregates['nodes'])
+          aggregates['nodes'].append({'pos': parent, 'name' : p.key().name(), 'group': 'Remind', 'relateds': p.countRelated })
           if p.author not in users_array:
             users_array.append(p.author)
-       params['reminds'] = reminds
-       params['reminds_array'] = reminds_array
-       params['users_array'] = users_array
-       tag_list = {}
-       tags_array = []
-       tags = Tag.all()
+          children = db.query_descendants(p)
+          for rel in children:
+              child = len(aggregates['nodes'])
+              aggregates['nodes'].append({'pos': child, 'name': rel.key().name(), 'group': 'Related'})
+              aggregates['links'].append({'source': parent, 'target': child, 'value':1})
+          
        for t in tags:
-           tag_list[str(t.key().name())] = { 'tagName' : t.tagName }
-           tags_array.append(t.tagName)
+          tag_list[str(t.key().name())] = {'tagName' : t.tagName}
+          tag_pos = len(aggregates['nodes'])
+          aggregates['nodes'].append({'pos': tag_pos, 'name' : t.tagName, 'group': 'Tag', 'relateds': t.tagCounter })
+          for p in t.remindsTo:
+                for i in aggregates['nodes']:
+                   if i['name'] == p.key().name():
+                      aggregates['links'].append({'source': tag_pos, 'target': i['pos'], 'value':1})                  
+      
+       params['reminds'] = reminds
+       params['users_array'] = users_array
        params['tags'] = tag_list
-       params['tags_array'] = tags_array
+       params['aggregates'] = json.dumps(aggregates)
        self.render_template('home.html', params)
        
 class EditController(BaseHandler):

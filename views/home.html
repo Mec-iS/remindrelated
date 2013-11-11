@@ -1,32 +1,48 @@
 {% extends "base.html" %}
 
-
 {% block body %}
-<br/>
-<br/>
-<b>Tags in the system:</b><br/>
+<script>
+var graph = {{aggregates|safe}};
+</script>
+<div class="row">
+<div class="col-md-3">
+<div class="row">
+<p><h4><b><u style="color:rgb(255, 127, 14);">Tags</u> in the system:</b></h4></p>
 {% for k,v in tags.items %}
-   <a href="/find/{{k}}/">{{v.tagName}}</a>&nbsp;
+   <div class="tagsClass" data="tag" id="{{k}}"><a href="/find/{{k}}/">{{v.tagName}}</a></div>
 {% endfor %}
 
-<br/>
-<br/>
-<b>Users in the system:</b><br/>
+</div>
+</div>
+
+
+<div id="diagram-1" class="col-md-9">
+<p align="right"><b>Entities in the system:</b></p>
+
+</div>
+
+</div>
+
+
+<div class="row">
+<div class="col-md-12">
+<p><h4><b><u style="color:rgb(31, 119, 180);">Reminds</u> in the system:</b></h4></p>
+{% for k,v in reminds.items %}
+<div class="col-md-3 remindClass" data="rem" id="{{k}}"><span class="date-span">{{v.date}}</span> - {{v.what}} @ {{v.link}} - <a class="related-link" href="/related/{{k}}/">@relateds</a> - <a class="add-related" href="/new/{{k}}/">add related</a></div>
+
+{% endfor %}
+</div>
+</div>
+
+<div class="row">
+<p><h4><b><u>Users</u> in the system:</b></h4></p>
 {% for u in users_array %}
 {{u}}<br/>
 {% endfor %}
+</div>
 
-
-<br/>
-<br/>
-<b>Saved in the system:</b><br/>
-{% for k,v in reminds.items %}
-{{v.date}} - {{v.what}}, {{v.link}} - <a href="/new/{{k}}/">add related</a> - <a href="/related/{{k}}/">relateds</a><br/>
-
-{% endfor %}
-
-<div id="diagram-1"></div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="/static/d3networks.js" charset="utf-8"></script>
+<script src="/static/forcednet.js" charset="utf-8"></script>
+
 {% endblock %}
