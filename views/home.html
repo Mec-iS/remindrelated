@@ -31,7 +31,7 @@ var graph = {{aggregates|safe}};
 {% for k,v in reminds.items %}
     <div class="col-md-3 remindClass" data="rem" id="{{k}}"><span class="date-span">{{v.date}}</span> <br/> <b>{{v.what}}</b> <br/><i>@{{v.link|urlizetrunc:32}}</i> <br/> <a class="related-link" href="/related/{{k}}/">@relateds</a> - <a class="add-related" href="/new/{{k}}/">add related</a></div>
    {% if forloop.counter|divisibleby:3 %}
-    </div><div class="row"><div class="col-md-1"></div>
+    </div><div class="row"><div class="col-md-2"></div>
    {% endif %}
 {% endfor %}
 </div>
